@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region us-west-2 --no-include-email)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - IMAGE_TAG=$(echo $IMAGE_TAG | sed -e "s/\\.//g")
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build --build-arg REACT_APP_API_ROOT=$REACT_APP_API_ROOT --build-arg PORT=$PORT --build-arg REACT_APP_CLOUDINARY_UPLOAD_URL=$REACT_APP_CLOUDINARY_UPLOAD_URL -t 062121228847.dkr.ecr.us-west-2.amazonaws.com/autofin-crm-frontend-stg:latest .
+      - docker tag 062121228847.dkr.ecr.us-west-2.amazonaws.com/autofin-crm-frontend-stg:latest 062121228847.dkr.ecr.us-west-2.amazonaws.com/autofin-crm-frontend-stg:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push 062121228847.dkr.ecr.us-west-2.amazonaws.com/autofin-crm-frontend-stg:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"autofin-crm-frontend","imageUri":"%s"}]' 062121228847.dkr.ecr.us-west-2.amazonaws.com/autofin-crm-frontend-stg:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json

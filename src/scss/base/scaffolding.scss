@@ -1,0 +1,43 @@
+main {
+  padding: 0;
+}
+// @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900&display=swap');
+// https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,900&display=swap
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  // font-family: 'SourceSansPro','Roboto', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+
+  @include themify($themes) {
+    color: themed('colorText');
+  }
+}
+
+* {
+  box-sizing: inherit;
+}
+
+ul, ol {
+  padding-left: 15px;
+  margin-bottom: 0;
+}
+
+a {
+  color: $color-blue;
+  transition: all 0.3s;
+
+  &:hover {
+    text-decoration: none;
+    color: $color-blue-hover;
+  }
+}
+
+img {
+  width: 100%;
+}
